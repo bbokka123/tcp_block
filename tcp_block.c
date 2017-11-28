@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
   // 네트웍 디바이스 이름 출력
   printf("DEV: %s\n",dev);
 
-  pcap_t* handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
+  pcap_t* handle = pcap_open_live(dev, BUFSIZ, 1, 1, errbuf);
   //descriptor를 생성한다. 3 번째 인자 1은 promiscuous mode로 로컬네트웍의
   //모든 패킷을 캡처한다. 
   if (handle == NULL) {
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
 	    if(ntohs(tcph->th_dport) == 80){
 		
 		printf("its http!\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-	    	break;
+	    	
 		tcph->th_flags = TH_RST;	
 	        data_size = ntohs(iph->ip_len) - ip_size - tcp_size;
 		if(data_size ==0) 	
@@ -200,7 +200,7 @@ int main(int argc, char* argv[]) {
 	   printf("%02x",*(packet++));
 	   if((++count)==16) {printf("\n"); break;} 
     }
-    	    
+     	    
     
     	
   printf("====================\n");  
