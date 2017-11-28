@@ -109,13 +109,17 @@ int main(int argc, char* argv[]) {
 		
 		printf("its http!\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 	    	
-		tcph->th_flags = TH_RST;	
+		tcph->th_flags = TH_RST+TH_ACK;	
 	        data_size = ntohs(iph->ip_len) - ip_size - tcp_size;
-		if(data_size ==0) 	
+		if(data_size ==0){ 	
 		tcph->th_seq += 1;
-		else
+		tcph->th_ack += 1; 
+		tcph->th_win = 0;
+	        }
+		else{
 		tcph->th_seq += data_size;
-
+		tcph->th_win=0;
+		}
 		//forward
 		packet = packet - ip_size - sizeof(struct ether_header);
 		if(pcap_sendpacket(handle, (unsigned char *)packet, length)){       
@@ -152,16 +156,20 @@ int main(int argc, char* argv[]) {
 	    
 	    //packet이 http가 아니라면
 	    else{
-		tcph->th_flags = TH_RST;
+		tcph->th_flags = TH_RST+TH_ACK;
 		//forward
 		packet = packet - ip_size - sizeof(struct ether_header);
 	        data_size = ntohs(iph->ip_len) - ip_size - tcp_size;
 		
-		if(data_size ==0) 	
+		if(data_size ==0){ 	
 		tcph->th_seq += 1;
-		else
+		tcph->th_ack += 1; 
+		tcph->th_win = 0;
+		}
+		else{
 		tcph->th_seq += data_size;
-
+		tcph->th_win=0;
+		}
 		if(pcap_sendpacket(handle, (unsigned char *)packet, length)){       
 	                fprintf(stderr, "\nError sending the packet\n");
 	                exit(0);
